@@ -29,6 +29,73 @@ class DataBase:
     def _set_foreign_keys(self):
         self.conn.execute("PRAGMA FOREIGN_KEYS = ON")
 
+    def view_wares(self, brand_id, category_id):
+        self._connect()
+        query = "SELECT * FROM Wares WHERE Brand_ID={} AND Category_ID={}".format(brand_id, category_id)
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        self.conn.close()
+        return rows
+
+    def view_buys(self):
+        self._connect()
+        # self.cursor.execute("SELECT * FROM Buys")
+        query = "SELECT B.ID,B.Total_amount,U.Name || ' ' || U.Family As FullName ,B.Date FROM" \
+                " Buys B INNER JOIN Users U ON B.User_ID = U.ID"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        self.conn.close()
+        return rows
+
+    def view_sells(self):
+        self._connect()
+        query = "SELECT S.ID,S.Total_amount,U.Name || ' ' || U.Family As FullName ,S.Date FROM" \
+                " Sells S INNER JOIN Users U ON S.User_ID = U.ID"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        self.conn.close()
+        return rows
+
+    def view_brands(self):
+        self._connect()
+        self.cursor.execute("SELECT * FROM Brands")
+        rows = self.cursor.fetchall()
+        self.conn.close()
+        return rows
+
+    def view_sellers(self):
+        self._connect()
+        self.cursor.execute("SELECT * FROM Users WHERE Is_Seller=1")
+        rows = self.cursor.fetchall()
+        self.conn.close()
+        return rows
+
+    def view_customers(self):
+        self._connect()
+        self.cursor.execute("SELECT ID, Name || ' ' || Family AS Customer FROM Users WHERE Is_Seller=0")
+        rows = self.cursor.fetchall()
+        self.conn.close()
+        return rows
+
+    def view_categories(self):
+        self._connect()
+        self.cursor.execute("SELECT * FROM Categories")
+        rows = self.cursor.fetchall()
+        self.conn.close()
+        return rows
+
+    def get_sell_price(self, ware_id):
+        self._connect()
+        query = "SELECT Sell_Price FROM Wares WHERE ID={}".format(ware_id)
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        self.conn.close()
+        if len(rows) > 0:
+            rows = rows[0][0]
+        else:
+            rows = 0
+        return rows
+
     def __create_user(self):
         query = "CREATE TABLE IF NOT EXISTS Users (" \
                 "ID INTEGER PRIMARY KEY AUTOINCREMENT," \
@@ -192,6 +259,5 @@ class DataBase:
                                     Sellers)
             self.cursor.executemany("INSERT INTO Users(Name,Family,Sex,Address,Phone,Is_Seller) VALUES (?,?,?,?,?,?)",
                                     Customers)
-
 
 # db = DataBase('Sale_DB.db')
