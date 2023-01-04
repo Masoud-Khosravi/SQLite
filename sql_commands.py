@@ -96,6 +96,66 @@ class DataBase:
             rows = 0
         return rows
 
+    def add_buy(self, user_id, total_amount, date):
+        self._connect()
+        query = "INSERT INTO Buys (User_ID,Total_amount,[Date]) VALUES ({},{},'{}')".format(user_id, total_amount, date)
+        self.cursor.execute(query)
+        query = "select seq from sqlite_sequence where name='Buys'"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchone()[0]
+        self.conn.commit()
+        self.conn.close()
+        return rows
+
+    def add_sell(self, user_id, total_amount, date):
+        self._connect()
+        query = "INSERT INTO Sells (User_ID,Total_amount,[Date]) VALUES ({},{},'{}')".format(user_id, total_amount,
+                                                                                             date)
+        self.cursor.execute(query)
+        query = "SELECT last_insert_rowid()"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()[0][0]
+        self.conn.commit()
+        self.conn.close()
+        return rows
+
+    def add_sell_details(self, id_sell, ware_id, value, price):
+        self._connect()
+        query = "SELECT Buy_Price,Stock FROM Wares WHERE ID={}".format(ware_id)
+        self.cursor.execute(query)
+        rows = self.cursor.fetchone()
+        buy_price = rows[0]
+        stock_old = rows[1]
+        new_stock = stock_old - value
+
+        query1 = "INSERT INTO Sells_Details (ID_Sell,Ware_ID,Value,Sell_Price,Buy_Price)" \
+                 " VALUES ({},{},{},{},{})".format(id_sell, ware_id, value, price, buy_price)
+        query2 = "UPDATE Wares SET Stock={} WHERE ID={}".format(new_stock, ware_id)
+        scrip = query1 + "; " + query2 + ";"
+        self.cursor.executescript(scrip)
+        self.conn.commit()
+        self.conn.close()
+
+    def add_buy_details(self, id_buy, ware_id, value, price):
+        self._connect()
+        query = "SELECT Buy_Price,Stock FROM Wares WHERE ID={}".format(ware_id)
+        self.cursor.execute(query)
+        rows = self.cursor.fetchone()
+        buy_old = rows[0]
+        stock_old = rows[1]
+        new_stock = value + stock_old
+        new_buy = (buy_old * stock_old + price * value) / new_stock
+        new_sell = new_buy * 120 / 100
+
+        query1 = "INSERT INTO Buys_Details (ID_Buy,Ware_ID,Value,Price) VALUES ({},{},{},{})".format(id_buy, ware_id,
+                                                                                                     value, price)
+        query2 = "UPDATE Wares SET Stock={} , Buy_Price={}, Sell_Price={} WHERE ID={}".format(new_stock, new_buy,
+                                                                                              new_sell, ware_id)
+        scrip = query1 + "; " + query2 + ";"
+        self.cursor.executescript(scrip)
+        self.conn.commit()
+        self.conn.close()
+
     def __create_user(self):
         query = "CREATE TABLE IF NOT EXISTS Users (" \
                 "ID INTEGER PRIMARY KEY AUTOINCREMENT," \
