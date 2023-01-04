@@ -14,7 +14,17 @@ class DataBase:
         self._set_foreign_keys()
 
     def __create_first(self):
-        pass
+        self.__create_user()
+        self.__create_categories()
+        self.__create_brands()
+        self.__create_wares()
+        self.__create_sells()
+        self.__create_buys()
+        self.__create_sells_details()
+        self.__create_buys_details()
+        self._add_first_values()
+        self.conn.commit()
+        self.conn.close()
 
     def _set_foreign_keys(self):
         self.conn.execute("PRAGMA FOREIGN_KEYS = ON")
@@ -112,7 +122,6 @@ class DataBase:
                 "FOREIGN KEY(Ware_ID) REFERENCES Wares(ID))"
         self.cursor.execute(query)
 
-
     def _add_first_values(self):
 
         # ================ Check All items if exist or earlier exist anything --> do nothing ================
@@ -183,3 +192,6 @@ class DataBase:
                                     Sellers)
             self.cursor.executemany("INSERT INTO Users(Name,Family,Sex,Address,Phone,Is_Seller) VALUES (?,?,?,?,?,?)",
                                     Customers)
+
+
+# db = DataBase('Sale_DB.db')
