@@ -111,3 +111,75 @@ class DataBase:
                 "FOREIGN KEY(ID_Buy) REFERENCES Buys(ID)," \
                 "FOREIGN KEY(Ware_ID) REFERENCES Wares(ID))"
         self.cursor.execute(query)
+
+
+    def _add_first_values(self):
+
+        # ================ Check All items if exist or earlier exist anything --> do nothing ================
+        # ================ Means just add item in first time create database ================================
+        query = "SELECT * FROM sqlite_sequence"
+        self.cursor.execute(query)
+        res = self.cursor.fetchall()
+        category_exist = False
+        brand_exist = False
+        user_exist = False
+        ware_exist = False
+        for items in res:
+            if 'Categories' in items:
+                category_exist = True
+            elif 'Brands' in items:
+                brand_exist = True
+            elif 'Users' in items:
+                user_exist = True
+            elif 'Wares' in items:
+                ware_exist = True
+
+        if not category_exist:
+            # =================== Create Some Categories ========================
+            categories = [("Other",), ("Shows",), ("Shirts",), ("Jeans",)]
+            #         id->    1     ,      2    ,      3      ,    4
+            self.cursor.executemany("INSERT INTO Categories(Name) VALUES (?)", categories)
+
+        if not brand_exist:
+            # =================== Create Some Brands ============================
+            #           Name,          Address,  Website ,Phone, Email
+            brands = [("Other Brand", "No Address", None, None, None),  # id->1
+                      ("Adidas", "US Address", "adidas.com", "+1-12345", "info@adidas.com"),  # id->2
+                      ("Nike", "US2 Address", "nike.com", "+1-67890", "info@nike.com"),  # id->3
+                      ("Puma", "Germany Address", "puma.com", "+49-000111", "info@puma.com")]  # id->4
+
+            self.cursor.executemany("INSERT INTO Brands(Name,Address,Website,Phone,Email) VALUES (?,?,?,?,?)", brands)
+
+        if not ware_exist:
+            # =================== Create Some Wares ============================
+            #         Name, Brand_ID,Category_ID
+            Wares = [("Ad_Shoes_1", 2, 2), ("Ad_Shoes_2", 2, 2), ("Ad_Shoes_3", 2, 2),
+                     ("Ad_Shirt_1", 2, 3), ("Ad_Shirt_2", 2, 3), ("Ad_Shirt_3", 2, 3),
+                     ("Ni_Shoes_N1", 3, 2), ("Ni_Shoes_N2", 3, 2), ("Ni_Shoes_N3", 3, 2),
+                     ("Ni_Shirt_S1", 3, 3), ("Ni_Shirt_S2", 3, 3), ("Ni_Shirt_S3", 3, 3),
+                     ("Ni_Jeans_J1", 3, 4), ("Ni_Jeans_J2", 3, 4), ("Ni_Jeans_J3", 3, 4),
+                     ("Pu_Shoes_1", 4, 2), ("Pu_Shoes_2", 4, 2), ("Pu_Shoes_3", 4, 2),
+                     ("Pu_Shirt_1", 4, 3), ("Pu_Shirt_1", 4, 3), ("Pu_Shirt_1", 4, 3),
+                     ("Pu_Jeans_1", 4, 4), ("Pu_Jeans_2", 4, 4), ("Pu_Jeans_3", 4, 4)]
+
+            self.cursor.executemany("INSERT INTO Wares(Name,Brand_ID,Category_ID) VALUES (?,?,?)", Wares)
+
+        if not user_exist:
+            # =================== Create Some Sellers ===========================
+            #           Name,   Family,  Sex, Address, Phone, Is_Seller
+            Sellers = [("Other", "", 1, "Other Address", None, 1),
+                       ("Masoud", "Khosravi", 1, "Germany", "+4912345678", 1),
+                       ("John", "Snow", 1, "England", "+44111222333", 1)]
+
+            # =================== Create Some Customers ===========================
+            #              Name,   Family,  Sex, Address, Phone, Is_Seller
+            Customers = [("Other", "", 1, "Other Address", None, 0),
+                         ("Masoud", "Khosravi", 1, "Iran", "+98123456789", 0),
+                         ("Jack", "Bower", 1, "England", "+44888999000", 0),
+                         ("Mary", "Elfi", 0, "US Street", "+1000111222", 0),
+                         ("Anje", "Joli", 0, "Hollywood", "+9988776655", 0)]
+
+            self.cursor.executemany("INSERT INTO Users(Name,Family,Sex,Address,Phone,Is_Seller) VALUES (?,?,?,?,?,?)",
+                                    Sellers)
+            self.cursor.executemany("INSERT INTO Users(Name,Family,Sex,Address,Phone,Is_Seller) VALUES (?,?,?,?,?,?)",
+                                    Customers)
