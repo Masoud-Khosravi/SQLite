@@ -2,9 +2,9 @@
 
 # USE $\color{Yellow}SQLite$ Files in $\color{#1DADFF}Python$ 
 
-![GitHub last commit](https://img.shields.io/github/last-commit/Masoud-Khosravi/SQL-Python)
-![GitHub repo file count](https://img.shields.io/github/directory-file-count/Masoud-Khosravi/SQL-Python)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Masoud-Khosravi/SQL-Python)  
+![GitHub last commit](https://img.shields.io/github/last-commit/Masoud-Khosravi/SQLite)
+![GitHub repo file count](https://img.shields.io/github/directory-file-count/Masoud-Khosravi/SQLite)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Masoud-Khosravi/SQLite)  
 
 
 # $\color{red}Hello \space \color{lightblue}and \space \color{orange}Wellcome$
