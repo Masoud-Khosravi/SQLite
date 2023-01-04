@@ -9,7 +9,7 @@ db = sql_commands.DataBase('Sale_DB.db')
 # ========================== SQLWindow Setting ========================
 SQLWindow = Tk()
 SQLWindow.title("SQLWindow")
-SQLWindow.geometry('650x350')
+SQLWindow.geometry('680x350')
 SQLWindow.resizable(width=False, height=False)
 st = Style()
 st.theme_use('clam')
@@ -109,7 +109,7 @@ btn_add_Buy.grid(row=3, column=7, padx=5)
 # ========================== SQL_New_Window Setting =======================
 def new_window(is_buy=False):
     new_win = Toplevel(SQLWindow)
-    new_win.geometry("850x280")
+    new_win.geometry("880x300")
     # s = Style()
     # s.theme_use('clam')
 
